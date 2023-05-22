@@ -22,7 +22,7 @@ public class UI extends JFrame implements ActionListener {
 	private JButton exitButton;
 	private JPanel contentArea;
 	private CardLayout cardLayout;
-	private JTable statisticsTable;
+	private JTable expensesTable;
 	private DefaultTableModel tableModel;
 	private JLabel totalAmountLabel; // Add a class variable for the total amount label
 	private static final String FILE_PATH = "expenses.csv";
@@ -31,7 +31,7 @@ public class UI extends JFrame implements ActionListener {
 		super("Finance Tracker");
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(800, 600);
+		setSize(800, 620);
 
 		// Create the main layout
 		BorderLayout layout = new BorderLayout();
@@ -136,8 +136,8 @@ public class UI extends JFrame implements ActionListener {
 		tableModel.addColumn("Date");
 		tableModel.addColumn("Expense");
 		tableModel.addColumn("Amount");
-		statisticsTable = new JTable(tableModel);
-		JScrollPane scrollPane = new JScrollPane(statisticsTable);
+		expensesTable = new JTable(tableModel);
+		JScrollPane scrollPane = new JScrollPane(expensesTable);
 		panel.add(scrollPane);
 
 		// Create the "Save Changes" button
@@ -146,7 +146,7 @@ public class UI extends JFrame implements ActionListener {
 		panel.add(saveChangesButton);
 
 		// Create the label to display the total amount spent
-		totalAmountLabel = new JLabel("Total Amount Spent: £0.00");
+		totalAmountLabel = new JLabel("Total Amount Spent: Â£0.00");
 		totalAmountLabel.setFont(new Font("Arial", Font.BOLD, 14));
 		panel.add(totalAmountLabel, BorderLayout.SOUTH);
 
@@ -196,65 +196,74 @@ public class UI extends JFrame implements ActionListener {
 
 
 	public void actionPerformed(ActionEvent e) {
-		String actionCommand = e.getActionCommand();
+	    String actionCommand = e.getActionCommand();
 
-		if (actionCommand.equals("Add Expense")) {
-			cardLayout.show(contentArea, "Add Expense");
-		} else if (actionCommand.equals("Edit Expense")) {
-			cardLayout.show(contentArea, "Edit Expense");
-		} else if (actionCommand.equals("Check Expense")) {
-			cardLayout.show(contentArea, "Check Expense");
-		} else if (actionCommand.equals("Save")) {
-			// Get the expense and amount
-			String expense = expenseField.getText();
-			String amount = amountField.getText();
+	    if (actionCommand.equals("Add Expense")) {
+	        cardLayout.show(contentArea, "Add Expense");
+	    } else if (actionCommand.equals("Edit Expense")) {
+	        cardLayout.show(contentArea, "Edit Expense");
+	    } else if (actionCommand.equals("Check Expense")) {
+	        cardLayout.show(contentArea, "Check Expense");
+	    } else if (actionCommand.equals("Save")) {
+	        // Get the expense and amount
+	        String expense = expenseField.getText();
+	        String amount = amountField.getText();
 
-			// Get the current date
-			String currentDate = getCurrentDate();
+	        // Get the current date
+	        String currentDate = getCurrentDate();
 
-			// Add the expense to the statistics table
-			Object[] rowData = { currentDate, expense, "£" + amount };
-			tableModel.addRow(rowData);
+	        // Add the expense to the statistics table
+	        Object[] rowData = {currentDate, expense, "Â£" + amount};
+	        tableModel.addRow(rowData);
 
-			// Clear the fields
-			expenseField.setText("");
-			amountField.setText("");
+	        // Clear the fields
+	        expenseField.setText("");
+	        amountField.setText("");
 
-			// Update the total amount spent label
-			updateTotalAmount();
-		} else if (actionCommand.equals("Exit")) {
-			exit();
-		} else if (actionCommand.equals("Save Changes")) {
-			int rowCount = tableModel.getRowCount();
-			for (int i = 0; i < rowCount; i++) {
-				String date = (String) tableModel.getValueAt(i, 0);
-				String expense = (String) tableModel.getValueAt(i, 1);
-				String amount = (String) tableModel.getValueAt(i, 2);
+	        // Update the total amount spent label
+	        updateTotalAmount();
 
-				// Update the expenses.csv file or perform other operations as needed
-				// Here, we will just print the updated data for demonstration purposes
-				System.out.println("Updated data - Date: " + date + ", Expense: " + expense + ", Amount: " + amount);
-			}
-		}
+	        // Update the expenses table in the "Check Expense" panel
+	        expensesTable.setModel(tableModel);
+	    } else if (actionCommand.equals("Exit")) {
+	        exit();
+	    } else if (actionCommand.equals("Save Changes")) {
+	        int rowCount = tableModel.getRowCount();
+	        for (int i = 0; i < rowCount; i++) {
+	            String date = (String) tableModel.getValueAt(i, 0);
+	            String expense = (String) tableModel.getValueAt(i, 1);
+	            String amount = (String) tableModel.getValueAt(i, 2);
+
+	            // Update the expenses.csv file or perform other operations as needed
+	            // Here, we will just print the updated data for demonstration purposes
+	            System.out.println("Updated data - Date: " + date + ", Expense: " + expense + ", Amount: " + amount);
+	        }
+
+	        // Update the expenses table in the "Check Expense" panel
+	        expensesTable.setModel(tableModel);
+
+	        // Update the total amount spent label
+	        updateTotalAmount();
+	    }
 	}
 
+
 	private void updateTotalAmount() {
-		double totalAmount = calculateTotalAmount();
-		DecimalFormat decimalFormat = new DecimalFormat("0.00");
-		String totalAmountFormatted = decimalFormat.format(totalAmount);
-		// Update this line to refer to the correct label
-		totalAmountLabel.setText("Total Amount Spent: £" + totalAmountFormatted);
+	    double totalAmount = calculateTotalAmount();
+	    DecimalFormat decimalFormat = new DecimalFormat("0.00");
+	    String totalAmountFormatted = decimalFormat.format(totalAmount);
+	    totalAmountLabel.setText("Total Amount Spent: Â£" + totalAmountFormatted);
 	}
 
 	private double calculateTotalAmount() {
-		double totalAmount = 0.0;
-		int rowCount = tableModel.getRowCount();
-		for (int i = 0; i < rowCount; i++) {
-			String amountString = (String) tableModel.getValueAt(i, 2);
-			double amount = Double.parseDouble(amountString.substring(1));
-			totalAmount += amount;
-		}
-		return totalAmount;
+	    double totalAmount = 0.0;
+	    int rowCount = tableModel.getRowCount();
+	    for (int i = 0; i < rowCount; i++) {
+	        String amountString = (String) tableModel.getValueAt(i, 2);
+	        double amount = Double.parseDouble(amountString.substring(1));
+	        totalAmount += amount;
+	    }
+	    return totalAmount;
 	}
 
 	private String getCurrentDate() {
@@ -284,20 +293,22 @@ public class UI extends JFrame implements ActionListener {
 	}
 
 	private void loadDataFromFile() {
-		try (Scanner scanner = new Scanner(new File(FILE_PATH))) {
-			while (scanner.hasNextLine()) {
-				String line = scanner.nextLine();
-				String[] data = line.split(",");
-				if (data.length == 3) {
-					tableModel.addRow(data);
-				}
-			}
-			System.out.println("Data loaded from file: " + FILE_PATH);
-		} catch (FileNotFoundException e) {
-			// The file doesn't exist yet, it will be created when saving the data
-			System.out.println("No data file found. New file will be created: " + FILE_PATH);
-		}
+	    try (Scanner scanner = new Scanner(new File(FILE_PATH))) {
+	        while (scanner.hasNextLine()) {
+	            String line = scanner.nextLine();
+	            String[] data = line.split(",");
+	            if (data.length == 3) {
+	                tableModel.addRow(data);
+	            }
+	        }
+	        expensesTable.setModel(tableModel); // Assign the table model to the expensesTable
+	        System.out.println("Data loaded from file: " + FILE_PATH);
+	    } catch (FileNotFoundException e) {
+	        // The file doesn't exist yet, it will be created when saving the data
+	        System.out.println("No data file found. New file will be created: " + FILE_PATH);
+	    }
 	}
+
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> {
